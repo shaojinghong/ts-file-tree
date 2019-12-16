@@ -34,21 +34,72 @@ export default class Hello extends React.Component {
   };
 
   render() {
+
+    const data = [
+      {
+        key: '0-1',
+        title: 'components',
+        children: [
+          {
+            key: '0-1-0',
+            title: 'Toolbar.tsx',
+            children: [
+              {
+                key: '0-1-0-0',
+                title: 'Button.tsx',
+              },
+              {
+                key: '0-1-0-1',
+                title: 'Icon.tsx'
+              }
+            ]
+          },
+          {
+            key: '0-1-1',
+            title: 'Tittle.tsx',
+          },
+        ]
+      },
+      {
+        key: '0-0',
+        title: 'src',
+        children: [
+          {
+            key: '0-0-0',
+            title: 'index.ts'
+          },
+          {
+            key: '0-0-1',
+            title: 'app.tsx'
+          }
+        ]
+      },
+    ]
+
+    interface INode {
+      key: string,
+      title: string,
+      children?: INode[],
+    }
+
+    function loop(data: INode[]): JSX.Element[] {
+      return data.map(item => {
+        if (item.children && item.children.length) {
+          return (
+            <TreeNode key={item.key} title={item.title}>
+              {loop(item.children)}
+            </TreeNode>
+          );
+        }
+        return <TreeNode key={item.key} title={item.title} isLeaf/>;
+      });
+    }
+
     return (
       <DirectoryTree multiple defaultExpandAll onSelect={this.onSelect} onExpand={this.onExpand}
         className={styles['tree-container']}
       >
-        <TreeNode title="components" key="0-1">
-          <TreeNode title="Toolbar.tsx" key="0-1-0">
-            <TreeNode title="Button.tsx" key="0-1-0-0" isLeaf />
-            <TreeNode title="Icon.tsx" key="0-1-0-1" isLeaf />
-          </TreeNode>
-          <TreeNode title="Tittle.tsx" key="0-1-1" isLeaf />
-        </TreeNode>
-        <TreeNode title="src" key="0-0">
-          <TreeNode title="index.ts" key="0-0-0" isLeaf />
-          <TreeNode title="app.tsx" key="0-0-1" isLeaf />
-        </TreeNode>
+        {loop(data)}
       </DirectoryTree>
     );
   }
