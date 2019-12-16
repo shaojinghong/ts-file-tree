@@ -1,0 +1,10 @@
+{
+  "name": "ant-blog",
+  "script": "./server/index.js",
+  "instances": "1",
+  "watch": true,
+  "error_file": "~/log/ant-blog/pm2_error.log",
+  "out_file": "~/log/ant-blog/pm2_out.log",
+  "merge_logs": true,
+  "log_date_format": "YYYY-MM-DD HH:mm:ss"
+}
