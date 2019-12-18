@@ -41,7 +41,7 @@ const App = () => {
         },
         {
           key: '0-0-1',
-          title: 'app.tsx'
+          title: 'app.tsx',
         }
       ]
     },

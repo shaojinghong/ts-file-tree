@@ -12,6 +12,7 @@ interface INode {
   key: string,
   title: string,
   children?: INode[],
+  status?: string,
 }
 
 interface Props {
@@ -46,6 +47,9 @@ export default function FilesTree({ sourceData }: Props){
   const rename = (data: INode[], key: string, name: string) => {
     data.forEach((item) => {
       if (item.key === key) {
+        if (item.status === 'creating') {
+          delete item.status;
+        }
         item.title = name;
         return;
       } else {
@@ -56,8 +60,52 @@ export default function FilesTree({ sourceData }: Props){
     })
   }
 
+  const addFile = (data: INode[], key: string) => {
+    let newNode = {
+      key: '',
+      title: '',
+      status: 'creating'
+    }
+    data.forEach((item) => {
+      if (item.key === key) {
+        if (!item.children) {
+          item.children = [];
+        }
+        newNode.key = `${item.key}-${item.children.length}`
+        item.children.push(newNode);
+        return;
+      } else {
+        if (item.children) {
+          addFile(item.children, key);
+        }
+      }
+    })
+  }
+
+  const addFolder = (data: INode[], key: string) => {
+    let newNode = {
+      key: '',
+      title: '',
+      children: [],
+      status: 'creating'
+    }
+    data.forEach((item) => {
+      if (item.key === key) {
+        if (!item.children) {
+          item.children = [];
+        }
+        newNode.key = `${item.key}-${item.children.length}`
+        item.children.push(newNode);
+        return;
+      } else {
+        if (item.children) {
+          addFolder(item.children, key);
+        }
+      }
+    })
+  }
+
   const handleDelete = (key: string) => {
-    console.log('Delete: ', key);
     deleteNode(data, key);
     setData([...data]);
   }
@@ -67,14 +115,30 @@ export default function FilesTree({ sourceData }: Props){
     setData([...data]);
   }
 
+  const handleFileAdd = (key: string) => {
+    addFile(data, key);
+    setData([...data]);
+  }
+
+  const handleFolderAdd = (key: string) => {
+    addFolder(data, key);
+    setData([...data]);
+  }
+
   function loop(data: INode[]): JSX.Element[] {
     return data.map(item => {
-      if (item.children && item.children.length) {
+      if (item.children) {
         return (
           <TreeNode
             key={item.key}
             title={
-              <DirectoryActions title={item.title} nodeKey={item.key} onDelete={handleDelete} onRename={handleRename}/>
+              <DirectoryActions
+                node={item}
+                onDelete={handleDelete}
+                onRename={handleRename}
+                onFileAdd={handleFileAdd}
+                onFolderAdd={handleFolderAdd}
+              />
             }>
             {loop(item.children)}
           </TreeNode>
@@ -84,7 +148,10 @@ export default function FilesTree({ sourceData }: Props){
         <TreeNode
           key={item.key}
           title={
-            <FileActions title={item.title} nodeKey={item.key} onDelete={handleDelete} onRename={handleRename}
+            <FileActions
+              node={item}
+              onDelete={handleDelete}
+              onRename={handleRename}
           />}
           isLeaf
         />
