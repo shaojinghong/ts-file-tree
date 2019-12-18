@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import { Tree } from 'antd';
 import { cloneDeep } from 'lodash';
+import { getIconForFile, getIconForFolder, getIconForOpenFolder } from 'vscode-icons-js';
 
-import FileActions from './FileActions';
-import DirectoryActions from './DirectoryActions';
+import FileActions from './NodeActions/FileActions';
+import DirectoryActions from './NodeActions/DirectoryActions';
 const styles = require('./style.scss');
 
 const { TreeNode, DirectoryTree } = Tree;
@@ -147,6 +148,7 @@ export default function FilesTree({ sourceData }: Props){
       return (
         <TreeNode
           key={item.key}
+          icon={<img src={`/static/icons/${getIconForFile(item.title)}`} alt="file" width="16"></img>}
           title={
             <FileActions
               node={item}

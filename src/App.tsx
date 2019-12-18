@@ -17,7 +17,7 @@ const App = () => {
           children: [
             {
               key: '0-1-0-0',
-              title: 'Button.tsx',
+              title: 'Button.scss',
             },
             {
               key: '0-1-0-1',
@@ -27,7 +27,7 @@ const App = () => {
         },
         {
           key: '0-1-1',
-          title: 'Tittle.tsx',
+          title: 'source.json',
         },
       ]
     },
@@ -37,7 +37,7 @@ const App = () => {
       children: [
         {
           key: '0-0-0',
-          title: 'index.ts'
+          title: 'index.html'
         },
         {
           key: '0-0-1',
@@ -45,6 +45,22 @@ const App = () => {
         }
       ]
     },
+    {
+      key: '0-2',
+      title: '.eslintrc',
+    },
+    {
+      key: '0-3',
+      title: 'config.yaml',
+    },
+    {
+      key: '0-4',
+      title: 'favicon.ico',
+    },
+    {
+      key: '0-5',
+      title: 'README.md',
+    }
   ]
 
   return (
