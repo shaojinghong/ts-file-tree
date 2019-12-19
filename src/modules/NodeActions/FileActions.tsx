@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Icon, Tooltip, Input } from 'antd';
 
 const styles  = require('./style.scss');
 
 interface Props {
   node: {
-    title: string,
     key: string,
+    title: string,
     status?: string,
   }
   onDelete: (nodeKey: string) => void,
@@ -17,7 +17,7 @@ export default function FileActions({ node, onDelete, onRename }: Props) {
 
   const [isFocusing, setIsFocusing] = useState(false);
   const [isEditing, setIsEditing] = useState(node.status === 'creating');
-  const [inputValue, setInputValue] = useState(node.title);
+  const inputValue = useRef(node.title);
 
   const enterHandler = () => {
     setIsFocusing(true);
@@ -29,13 +29,17 @@ export default function FileActions({ node, onDelete, onRename }: Props) {
 
   const submitHandler = () => {
     setIsEditing(false);
-    if (inputValue.length < 1) {
+    if (inputValue.current.length < 1) {
       if (node.status === 'creating') {
         onDelete(node.key);
       }
       return;
     }
-    onRename(node.key, inputValue);
+    onRename(node.key, inputValue.current);
+  }
+
+  const changeHandler = (e: any) => {
+    inputValue.current = e.target.value;
   }
 
   const Operations = () => {
@@ -61,7 +65,7 @@ export default function FileActions({ node, onDelete, onRename }: Props) {
     )
   }
 
-  const renderInput = () => {
+  const InputBox = () => {
     return (
       <Input autoFocus
         className={styles['rename-box']}
@@ -70,7 +74,7 @@ export default function FileActions({ node, onDelete, onRename }: Props) {
         onClick={(e) => {e.stopPropagation()}}
         onBlur={submitHandler}
         onPressEnter={submitHandler}
-        onChange={(e) => {setInputValue(e.target.value)}}
+        onChange={changeHandler}
       />
     )
   }
@@ -82,7 +86,7 @@ export default function FileActions({ node, onDelete, onRename }: Props) {
       onMouseLeave={leaveHandler}
     >
       { 
-        isEditing ? renderInput() : <span>{node.title}</span>
+        isEditing ? <InputBox /> : <span>{node.title}</span>
       }
       {isFocusing && !isEditing && <Operations/>}
     </span>

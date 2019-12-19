@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Icon, Tooltip, Input } from 'antd';
 
 const styles  = require('./style.scss');
@@ -15,11 +15,11 @@ interface Props {
   onFolderAdd: (key: string) => void
 }
 
-export default function DirectoryActions({ node, onDelete, onRename, onFileAdd, onFolderAdd }: Props) {
+function DirectoryActions({ node, onDelete, onRename, onFileAdd, onFolderAdd }: Props) {
 
   const [isFocusing, setIsFocusing] = useState(false);
   const [isEditing, setIsEditing] = useState(node.status === 'creating');
-  const [inputValue, setInputValue] = useState(node.title);
+  const inputValue = useRef(node.title);
 
   const enterHandler = () => {
     setIsFocusing(true);
@@ -31,13 +31,17 @@ export default function DirectoryActions({ node, onDelete, onRename, onFileAdd, 
 
   const submitHandler = () => {
     setIsEditing(false);
-    if (inputValue.length < 1) {
+    if (inputValue.current.length < 1) {
       if (node.status === 'creating') {
         onDelete(node.key);
       }
       return;
     }
-    onRename(node.key, inputValue);
+    onRename(node.key, inputValue.current);
+  }
+  
+  const changeHandler = (e: any) => {
+    inputValue.current = e.target.value;
   }
 
   const Operations = () => {
@@ -84,7 +88,7 @@ export default function DirectoryActions({ node, onDelete, onRename, onFileAdd, 
     )
   }
 
-  const renderInput = () => {
+  const InputBox = () => {
     return (
       <Input autoFocus
         className={styles['rename-box']}
@@ -93,7 +97,7 @@ export default function DirectoryActions({ node, onDelete, onRename, onFileAdd, 
         onClick={(e) => {e.stopPropagation()}}
         onBlur={submitHandler}
         onPressEnter={submitHandler}
-        onChange={(e) => {setInputValue(e.target.value)}}
+        onChange={changeHandler}
       />
     )
   }
@@ -105,9 +109,11 @@ export default function DirectoryActions({ node, onDelete, onRename, onFileAdd, 
       onMouseLeave={leaveHandler}
     >
       { 
-        isEditing ? renderInput() : node.title
+        isEditing ? <InputBox /> : node.title
       }
       {isFocusing && !isEditing && <Operations/>}
     </span>
   )
 }
+
+export default DirectoryActions;

@@ -1,19 +1,19 @@
 import React, {useState} from 'react'
 import { Tree } from 'antd';
 import { cloneDeep } from 'lodash';
-import { getIconForFile, getIconForFolder, getIconForOpenFolder } from 'vscode-icons-js';
+import { getIconForFile } from 'vscode-icons-js';
 
 import FileActions from './NodeActions/FileActions';
 import DirectoryActions from './NodeActions/DirectoryActions';
-const styles = require('./style.scss');
 
+const styles = require('./style.scss');
 const { TreeNode, DirectoryTree } = Tree;
 
 interface INode {
   key: string,
   title: string,
-  children?: INode[],
   status?: string,
+  children?: INode[],
 }
 
 interface Props {
@@ -162,7 +162,11 @@ export default function FilesTree({ sourceData }: Props){
   }
 
   return (
-    <DirectoryTree multiple defaultExpandAll onSelect={onSelect} onExpand={onExpand}
+    <DirectoryTree
+      multiple
+      defaultExpandAll
+      onSelect={onSelect}
+      onExpand={onExpand}
       className={styles['tree-container']}
     >
       {loop(data)}
